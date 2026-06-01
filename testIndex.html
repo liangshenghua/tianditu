@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./lib/ol.css" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
+      #app {
+        width: 100%;
+        height: 100%;
+      }
+      .map {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <button onClick="addLayer()">增加标记图层</button>
+    <button onClick="removeLayer()">删除图层</button>
+    <button onClick="addGeojson()">增加geoJson图层</button>
+    <div id="app">
+      <div class="map" id="map"></div>
+    </div>
+    <script src="./lib/ol.js"></script>
+
+    <script>
+      const key = ''
+
+      const vecLayer = new ol.layer.Tile({
+        id: 'vecLayer',
+        title: '矢量图层',
+        source: new ol.source.XYZ({
+          url: `https://t{0-7}.tianditu.gov.cn/vec_c/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=vec&STYLE=default&TILEMATRIXSET=c&FORMAT=tiles&TILECOL={x}&TILEROW={y}&TILEMATRIX={z}&tk=${key}`,
+          projection: 'EPSG:4326'
+        })
+      })
+      const cvaLayer = new ol.layer.Tile({
+        id: 'cvaLayer',
+        title: '矢量注记',
+        source: new ol.source.XYZ({
+          url: `https://t1.tianditu.gov.cn/cva_c/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=cva&STYLE=default&TILEMATRIXSET=c&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk=${key}`,
+          projection: 'EPSG:4326'
+        })
+      })
+
+      const map = new ol.Map({
+        target: 'map',
+        layers: [vecLayer],
+        view: new ol.View({
+          projection: 'EPSG:4326',
+          center: [113.12, 23.02], // 佛山
+          zoom: 8,
+          maxZoom: 18,
+          minZoom: 1,
+          // 强制视图的缩放级别（zoom level）只能是整数
+          constrainResolution: true,
+          // 禁用缩放的平滑过渡效果，让缩放操作立即跳转到目标分辨率。
+          /**
+           * 为 true（默认）：缩放时有平滑的动画过渡，连续缩放时不会立即约束分辨率
+           * 为 false：立即应用分辨率约束，没有过渡动画
+           */
+          smoothResolutionConstraint: false
+        })
+      })
+
+      // 增加图层
+      function addLayer() {
+        map.addLayer(cvaLayer)
+      }
+      // 隐藏图层
+      function removeLayer() {
+        let allLayer = map.getLayers().getArray()
+        let removeLayer = allLayer.find((item) => item.get('id') === 'cvaLayer')
+        map.removeLayer(removeLayer)
+      }
+
+      // 增加geojson
+      function addGeojson() {
+        const vectorLayer = new ol.layer.Vector({
+          source: new ol.source.Vector({
+            url: '/static/foshan.geojson', // GeoJSON 文件路径
+            format: new ol.format.GeoJSON()
+          }),
+          style: new ol.style.Style({
+            fill: new ol.style.Fill({
+              color: 'rgba(255, 255, 255, 0.0)'
+            }),
+            stroke: new ol.style.Stroke({
+              color: '#319FD3',
+              width: 3
+            }),
+            image: new ol.style.Circle({
+              radius: 5,
+              fill: new ol.style.Fill({ color: '#FF0000' })
+            })
+          })
+        })
+        map.addLayer(vectorLayer)
+        vectorLayer.getSource().on('featuresloadend', () => {
+          const extent = vectorLayer.getSource().getExtent()
+          if (extent && !isNaN(extent[0])) {
+            map.getView().fit(extent, {
+              padding: [50, 50, 50, 50],
+              duration: 1000
+            })
+          }
+          console.log(
+            'GeoJSON 加载完成，要素数量:',
+            vectorLayer.getSource().getFeatures().length
+          )
+        })
+      }
+    </script>
+  </body>
+</html>
