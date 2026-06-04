@@ -1,0 +1,99 @@
+*,
+*::before,
+*::after { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0; width: 100%; height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: #f0f2f5; color: #1d2939;
+}
+#app { width: 100%; height: 100%; display: flex; flex-direction: column; }
+
+/* ---- 工具栏 ---- */
+.operation {
+  background: #fff; padding: 10px 16px;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.08); z-index: 10;
+}
+.btn-group { display: flex; gap: 6px; flex-wrap: wrap; }
+.btn-group button {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 6px 14px; border: 1px solid #d0d5dd; border-radius: 6px;
+  background: #fff; color: #344054; font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all .15s ease; white-space: nowrap; line-height: 1.4;
+}
+.btn-group button:hover { background: #f2f4f7; border-color: #98a2b3; }
+.btn-group button:active { background: #e4e7ec; }
+.btn-group button.active-btn {
+  background: #eff6ff; border-color: #3b82f6; color: #3b82f6;
+}
+
+/* ---- 工具菜单 ---- */
+.tools-menu { position: relative; }
+.tools-toggle {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 6px 14px; border: 1px solid #d0d5dd; border-radius: 6px;
+  background: #fff; color: #344054; font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all .15s ease; white-space: nowrap; line-height: 1.4;
+}
+.tools-toggle:hover { background: #f2f4f7; border-color: #98a2b3; }
+.tools-toggle.active { background: #eff6ff; border-color: #3b82f6; color: #3b82f6; }
+.tools-dropdown {
+  position: absolute; top: calc(100% + 4px); left: 0;
+  background: #fff; border: 1px solid #e4e7ec; border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.12); z-index: 100;
+  min-width: 180px; padding: 4px;
+}
+.tool-item {
+  padding: 8px 12px; cursor: pointer; border-radius: 6px;
+  font-size: 13px; display: flex; align-items: center; gap: 8px;
+  transition: background .1s; user-select: none;
+}
+.tool-item:hover { background: #f2f4f7; }
+.tool-item.active { background: #eff6ff; color: #3b82f6; font-weight: 600; }
+.tool-item .check { width: 16px; text-align: center; font-size: 12px; }
+
+/* ---- 坐标搜索 ---- */
+.coord-bar {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  font-size: 13px; margin-left: auto;
+}
+.coord-bar label {
+  display: inline-flex; align-items: center; gap: 4px;
+  color: #475467; font-weight: 500;
+}
+.coord-bar input {
+  width: 100px; padding: 5px 8px; border: 1px solid #d0d5dd; border-radius: 6px;
+  font-size: 13px; outline: none; transition: border-color .15s;
+}
+.coord-bar input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.12); }
+.search-btn {
+  padding: 6px 14px; border: none; border-radius: 6px;
+  background: #3b82f6; color: #fff; font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: background .15s; line-height: 1.4;
+}
+.search-btn:hover { background: #2563eb; }
+.search-btn:active { background: #1d4ed8; }
+.coord-info {
+  color: #667085; font-size: 12px; background: #f9fafb;
+  padding: 4px 8px; border-radius: 4px;
+}
+.coord-result {
+  color: #b42318; font-weight: 600; font-size: 12px;
+  background: #fef3f2; padding: 4px 8px; border-radius: 4px;
+}
+
+/* ---- 地图容器 ---- */
+.map-wrapper { position: relative; flex: 1; width: 100%; }
+.map { width: 100%; height: 100%; }
+
+/* ---- 区名 tooltip ---- */
+.district-tooltip {
+  position: absolute; pointer-events: none; z-index: 200;
+  background: rgba(15, 23, 42, 0.85); color: #fff;
+  padding: 6px 10px; border-radius: 6px; font-size: 12px;
+  white-space: nowrap; line-height: 1.5;
+  transform: translate(16px, -50%);
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+}
+.district-tooltip .tip-name { font-weight: 600; font-size: 13px; }
+.district-tooltip .tip-code { color: #94a3b8; font-size: 11px; }

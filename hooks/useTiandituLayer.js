@@ -22,8 +22,24 @@ function useTiandituLayer (key) {
       projection: 'EPSG:4326',
     }),
   })
+  const imageLayer = new ol.layer.Image({
+    source: new ol.source.ImageStatic({
+      url: 'static/map.jpg', // 你的图片路径
+      projection: 'EPSG:4326',  // 地图的坐标系
+      // 关键：图片在地图上对应的地理范围 [左下角X, 左下角Y, 右上角X, 右上角Y]
+      // imageExtent: [113.12, 23.02, 113.42, 23.42]
+    }),
+    opacity: 0.8 // 可以设置透明度，以便看清底图
+  });
 
-  return { vecLayer, cvaLayer }
+  const Overlay = new ol.Overlay({
+    element: document.getElementById('fixed-image'), // 绑定 HTML 元素
+    position: [116.40, 39.90],          // 固定的地理坐标
+    positioning: 'center-center',                   // 元素的中心点对齐坐标
+    stopEvent: false                                // 允许鼠标透过图片拖拽地图
+  });
+
+  return { vecLayer, cvaLayer, imageLayer, Overlay }
 }
 
 export { useTiandituLayer }

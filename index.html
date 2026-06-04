@@ -3,71 +3,60 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>天地图 - 佛山</title>
     <link rel="stylesheet" href="./lib/ol.css" />
-    <style>
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-      }
-      #app {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-      }
-      .map {
-        flex: 1;
-        width: 100%;
-      }
-      .coord-pick {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex-wrap: wrap;
-        font-size: 13px;
-      }
-      .coord-pick input {
-        width: 90px;
-        padding: 2px 4px;
-      }
-      .coord-info {
-        color: #666;
-      }
-      .coord-result {
-        color: #d32f2f;
-        font-weight: bold;
-      }
-    </style>
+    <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
     <div id="app">
       <div class="operation">
         <div class="btn-group">
-          <button @click="addCvaLayer">增加标记图层</button>
-          <button @click="removeCvaLayer()">删除标记图层(通过图层)</button>
-          <button @click="removeCvaLayerById('cvaLayer')">
-            删除标记图层(通过ID)
+          <button @click="addCvaLayer">＋ 增加标注图层</button>
+          <button @click="removeCvaLayer()">✕ 删除标注图层</button>
+          <button @click="removeCvaLayerById('cvaLayer')">⊘ 删除标注图层(ID)</button>
+          <button @click="addFoShanGeojson()">◇ 增加 GeoJSON 图层</button>
+          <button :class="{ 'active-btn': districtLoaded }" @click="toggleDistrictLayer">
+            {{ districtLoaded ? '✕ 移除佛山五区' : '◆ 佛山五区' }}
           </button>
-          <button @click="addFoShanGeojson()">增加geoJson图层</button>
         </div>
-        <div class="coord-pick">
-          <label>经度: <input v-model="lonInput" placeholder="113.12" /></label>
-          <label>纬度: <input v-model="latInput" placeholder="23.02" /></label>
-          <button @click="doSearchCoordinate">搜索</button>
+
+        <!-- 工具菜单 -->
+        <div class="tools-menu">
+          <button class="tools-toggle" :class="{ active: showTools }" @click="showTools = !showTools">
+            🛠 工具 ▾
+          </button>
+          <div class="tools-dropdown" v-show="showTools" @click.stop>
+            <div class="tool-item" :class="{ active: coordToolActive }" @click="toggleCoordTool">
+              <span class="check">{{ coordToolActive ? '✓' : '' }}</span>
+              <span>📍 坐标拾取</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 坐标工具激活后显示 -->
+        <div class="coord-bar" v-show="coordToolActive">
+          <label>经度 <input v-model="lonInput" placeholder="113.12" /></label>
+          <label>纬度 <input v-model="latInput" placeholder="23.02" /></label>
+          <button class="search-btn" @click="doSearchCoordinate">搜索</button>
           <span class="coord-info">
-            鼠标坐标: {{ pointerCoord ? pointerCoord[0] + ', ' + pointerCoord[1] : '移动鼠标到地图上' }}
+            鼠标: {{ pointerCoord ? pointerCoord[0] + ', ' + pointerCoord[1] : '移动鼠标到地图上' }}
           </span>
           <span class="coord-result">
-            坐标获取结果: {{ pickedCoord ? pickedCoord[0] + ', ' + pickedCoord[1] : '点击地图或搜索获取' }}
+            坐标: {{ pickedCoord ? pickedCoord[0] + ', ' + pickedCoord[1] : '点击地图或搜索获取' }}
           </span>
         </div>
       </div>
 
-      <div class="map" id="map"></div>
+      <div class="map-wrapper">
+        <div class="map" id="map"></div>
+        <div class="district-tooltip"
+             v-show="districtTooltip.show"
+             :style="{ left: districtTooltip.x + 'px', top: districtTooltip.y + 'px' }">
+          <div class="tip-name">{{ districtTooltip.name }}</div>
+          <div class="tip-code">区划编码: {{ districtTooltip.code }}</div>
+        </div>
+        <img id="fixed-image" src="/static/map.jpg" style="width: 150px; height: auto; border: 2px solid white;" />
+      </div>
     </div>
     <script src="./lib/ol.js"></script>
     <script type="module" src="./index.js"></script>
