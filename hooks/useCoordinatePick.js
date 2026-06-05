@@ -43,7 +43,6 @@ function useCoordinatePick (map) {
     })
 
     clickKey = m.on('click', function (e) {
-      console.log('经纬度点击', e)
       pickedCoord.value = [e.coordinate[0].toFixed(6), e.coordinate[1].toFixed(6)]
       markerLayer.getSource().clear()
       markerLayer.getSource().addFeature(new ol.Feature({
@@ -53,7 +52,6 @@ function useCoordinatePick (map) {
   }
 
   function deactivate () {
-    console.log(active)
     if (!active) return
     active = false
     const m = unref(map)

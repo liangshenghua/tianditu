@@ -97,3 +97,38 @@ html, body {
 }
 .district-tooltip .tip-name { font-weight: 600; font-size: 13px; }
 .district-tooltip .tip-code { color: #94a3b8; font-size: 11px; }
+
+/* ---- 点位弹窗 ---- */
+.dot-popup {
+  position: absolute; pointer-events: none; z-index: 200;
+  background: #fff; color: #1d2939;
+  padding: 12px 16px; border-radius: 8px; font-size: 12px;
+  min-width: 200px; max-width: 320px;
+  line-height: 1.5; box-shadow: 0 4px 16px rgba(0,0,0,.15);
+  transform: translate(16px, -50%);
+  border: 1px solid #e4e7ec;
+}
+.dot-popup-title {
+  font-weight: 700; font-size: 13px; color: #1d2939;
+  padding-bottom: 6px; margin-bottom: 6px;
+  border-bottom: 1px solid #f2f4f7;
+}
+.dot-popup-item {
+  padding: 2px 0; color: #344054; font-size: 12px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.dot-popup-more {
+  color: #667085; font-size: 11px; padding-top: 4px;
+  font-style: italic;
+}
+.dot-popup-detail { display: flex; flex-direction: column; gap: 3px; }
+.dot-popup-row {
+  display: flex; gap: 8px; align-items: baseline;
+}
+.dot-popup-label {
+  color: #667085; font-size: 11px; white-space: nowrap;
+  flex-shrink: 0;
+}
+.dot-popup-value {
+  color: #1d2939; font-size: 12px; font-weight: 500;
+}

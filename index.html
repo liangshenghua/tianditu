@@ -18,6 +18,9 @@
           <button :class="{ 'active-btn': districtLoaded }" @click="toggleDistrictLayer">
             {{ districtLoaded ? '✕ 移除佛山五区' : '◆ 佛山五区' }}
           </button>
+          <button :class="{ 'active-btn': dotLoaded }" :disabled="dotLoading" @click="toggleDotLayer">
+            {{ dotLoading ? '⏳ 加载中...' : dotLoaded ? '✕ 移除海量点位' : '● 海量点位' }}
+          </button>
         </div>
 
         <!-- 工具菜单 -->
@@ -54,6 +57,22 @@
              :style="{ left: districtTooltip.x + 'px', top: districtTooltip.y + 'px' }">
           <div class="tip-name">{{ districtTooltip.name }}</div>
           <div class="tip-code">区划编码: {{ districtTooltip.code }}</div>
+        </div>
+        <div class="dot-popup" v-show="dotPopup.show"
+             :style="{ left: dotPopup.x + 'px', top: dotPopup.y + 'px' }">
+          <div class="dot-popup-title">{{ dotPopup.title }}</div>
+          <template v-if="dotPopup.isCluster">
+            <div class="dot-popup-item" v-for="item in dotPopup.items" :key="item.id">
+              {{ item.name }}
+            </div>
+            <div class="dot-popup-more" v-if="dotPopup.more">还有 {{ dotPopup.more }} 家企业...</div>
+          </template>
+          <div class="dot-popup-detail" v-else>
+            <div class="dot-popup-row" v-for="item in dotPopup.items" :key="item.label">
+              <span class="dot-popup-label">{{ item.label }}</span>
+              <span class="dot-popup-value">{{ item.value }}</span>
+            </div>
+          </div>
         </div>
         <img id="fixed-image" src="/static/map.jpg" style="width: 150px; height: auto; border: 2px solid white;" />
       </div>

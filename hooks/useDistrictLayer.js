@@ -65,7 +65,6 @@ function useDistrictLayer (map) {
 
     clickKey = m.on('click', function (e) {
       var f = m.forEachFeatureAtPixel(e.pixel, function (feat) { return feat })
-      console.log(selected, f)
       if (selected && selected !== f) selected.setStyle(defaultStyle)
       selected = f
       if (f) f.setStyle(selectedStyle)

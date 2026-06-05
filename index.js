@@ -5,10 +5,11 @@ import { useTiandituLayer } from '/hooks/useTiandituLayer.js'
 import { useLayer } from '/hooks/useLayer.js'
 import { useCoordinatePick } from '/hooks/useCoordinatePick.js'
 import { useDistrictLayer } from '/hooks/useDistrictLayer.js'
+import { useDotLayer } from '/hooks/useDotLayer.js'
 
 createApp({
   setup () {
-    const { vecLayer, cvaLayer, imageLayer} = useTiandituLayer('')
+    const { vecLayer, cvaLayer, imageLayer} = useTiandituLayer('94f45de0cf8340f572f4ae41558e145d')
     const map = useMap('map', { center: [113.12, 23.02], zoom: 10, layers: [vecLayer, cvaLayer] })
 
    
@@ -16,6 +17,7 @@ createApp({
     const { loadGeoJson } = useGeoJsonLayer(map)
     const { pointerCoord, pickedCoord, searchCoordinate, activate, deactivate } = useCoordinatePick(map)
     const { tooltip: districtTooltip, loaded: districtLoaded, addDistrictLayer, removeDistrictLayer } = useDistrictLayer(map)
+    const { addDotLayer, removeDotLayer, loading: dotLoading, loaded: dotLoaded, popup: dotPopup } = useDotLayer(map)
 
     // --- 工具菜单 ---
     const showTools = ref(false)
@@ -39,6 +41,11 @@ createApp({
     // --- 佛山五区图层切换 ---
     function toggleDistrictLayer () {
       if (districtLoaded.value) { removeDistrictLayer() } else { addDistrictLayer() }
+    }
+
+    // --- 海量点位图层切换 ---
+    function toggleDotLayer () {
+      if (dotLoaded.value) { removeDotLayer() } else { addDotLayer() }
     }
 
     // --- 图层操作 ---
@@ -70,10 +77,8 @@ createApp({
               holes.push(geom.getCoordinates()[0])
             }
           }
-          console.log(holes)
           // 创建遮罩：全球范围挖掉佛山
           var maskGeom = new ol.geom.Polygon([worldRing].concat(holes))
-          console.log([worldRing].concat(holes))
           var maskLayer = new ol.layer.Vector({
             source: new ol.source.Vector({ features: [new ol.Feature({ geometry: maskGeom })] }),
             style: new ol.style.Style({ fill: new ol.style.Fill({ color: 'rgba(3, 36, 62, 0.85)' }) }),
@@ -102,6 +107,7 @@ createApp({
       doSearchCoordinate, lonInput, latInput, pointerCoord, pickedCoord,
       showTools, coordToolActive, toggleCoordTool,
       districtTooltip, districtLoaded, toggleDistrictLayer,
+      dotLoading, dotLoaded, toggleDotLayer, dotPopup,
     }
   }
 }).mount('#app')
