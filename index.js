@@ -1,4 +1,4 @@
-import { createApp, ref, unref, onMounted  } from '/lib/dist/vue.esm-browser.prod.js'
+import { createApp, ref, unref, onMounted } from '/lib/dist/vue.esm-browser.prod.js'
 import { useMap } from '/hooks/useMap.js'
 import { useGeoJsonLayer } from '/hooks/useGeoJsonLayer.js'
 import { useTiandituLayer } from '/hooks/useTiandituLayer.js'
@@ -9,15 +9,15 @@ import { useDotLayer } from '/hooks/useDotLayer.js'
 
 createApp({
   setup () {
-    const { vecLayer, cvaLayer, imageLayer} = useTiandituLayer('94f45de0cf8340f572f4ae41558e145d')
+    const { vecLayer, cvaLayer, imageLayer } = useTiandituLayer('94f45de0cf8340f572f4ae41558e145d')
     const map = useMap('map', { center: [113.12, 23.02], zoom: 10, layers: [vecLayer, cvaLayer] })
 
-   
+
     const { addLayer, removeLayerById, removeLayerByLayer } = useLayer(map)
     const { loadGeoJson } = useGeoJsonLayer(map)
     const { pointerCoord, pickedCoord, searchCoordinate, activate, deactivate } = useCoordinatePick(map)
     const { tooltip: districtTooltip, loaded: districtLoaded, addDistrictLayer, removeDistrictLayer } = useDistrictLayer(map)
-    const { addDotLayer, removeDotLayer, loading: dotLoading, loaded: dotLoaded, popup: dotPopup } = useDotLayer(map)
+    const { addDotLayer, removeDotLayer, loading: dotLoading, loaded: dotLoaded, popup: dotPopup, _startPulseLoop } = useDotLayer(map)
 
     // --- 工具菜单 ---
     const showTools = ref(false)
@@ -45,7 +45,10 @@ createApp({
 
     // --- 海量点位图层切换 ---
     function toggleDotLayer () {
-      if (dotLoaded.value) { removeDotLayer() } else { addDotLayer() }
+      if (dotLoaded.value) { removeDotLayer() } else {
+        addDotLayer()
+        _startPulseLoop()
+      }
     }
 
     // --- 图层操作 ---
